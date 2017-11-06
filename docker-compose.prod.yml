@@ -1,0 +1,21 @@
+version: '3.2'
+
+services:
+  traefik:
+    command:
+      - --web
+      - --docker
+      - --docker.swarmmode
+      - --docker.watch
+      - --logLevel=DEBUG
+      - --acme
+      - --acme.entrypoint=https
+      - --acme.storage=/acme/acme.json
+      - --acme.OnHostRule
+      - --entrypoints=Name:http Address::80
+      - --entrypoints=Name:https Address::443 TLS
+      - --defaultentrypoints=http,https
+    volumes:
+      - acme-data:/acme
+volumes:
+  acme-data:

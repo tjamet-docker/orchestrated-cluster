@@ -1,0 +1,60 @@
+version: '3.2'
+
+services:
+
+  traefik:
+    image: traefik
+    command:
+      - --web
+      - --docker
+      - --docker.watch
+      - --logLevel=DEBUG
+    networks:
+      - webgateway
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  datadog:
+    image: datadog/docker-dd-agent:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup/:ro
+    deploy:
+      mode: global
+    secrets:
+      - dd-agent
+    environment:
+      SD_BACKEND: docker
+      DD_API_KEY_FILE: /run/secrets/dd-agent
+
+  summologic:
+    image: tjamet/sumologic-collector:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      mode: global
+    secrets:
+      - sumo-access-id
+      - sumo-access-key
+    environment:
+      SUMO_ACCESS_ID_FILE: /run/secrets/sumo-access-id
+      SUMO_ACCESS_KEY_FILE: /run/secrets/sumo-access-key
+
+secrets:
+  sumo-access-id:
+    external: true
+  sumo-access-key:
+    external: true
+  dd-agent:
+    external: true
+
+networks:
+  webgateway:
