@@ -12,9 +12,11 @@ services:
       - --acme.entrypoint=https
       - --acme.storage=/acme/acme.json
       - --acme.OnHostRule
-      - --entrypoints=Name:http Address::80
+      - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
       - --entrypoints=Name:https Address::443 TLS
       - --defaultentrypoints=http,https
+    ports:
+      - "443:443"
     volumes:
       - acme-data:/acme
 volumes:
