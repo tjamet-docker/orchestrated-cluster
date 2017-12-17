@@ -1,0 +1,57 @@
+version: '3.2'
+
+services:
+  drone-server:
+    image: drone/drone:0.8
+
+    ports:
+      - 8000
+      - 9000
+    volumes:
+      - drone-data:/var/lib/drone/
+    environment:
+      - DRONE_OPEN=true
+      - DRONE_HOST=https://ci.thib-o.eu
+      - DRONE_GITHUB=true
+    secrets:
+      - source: drone-server-secret
+        target: /.env
+    networks:
+      - web
+      - default
+    deploy:
+      labels:
+        - "traefik.port=8000"
+        - "traefik.backend=ci.thib-o.eu"
+        - "traefik.docker.network=infra_webgateway"
+        - "traefik.frontend.rule=Host:ci.thib-o.eu"
+    labels:
+      - "traefik.port=8000"
+      - "traefik.backend=ci.thib-o.eu"
+      - "traefik.docker.network=infra_webgateway"
+      - "traefik.frontend.rule=Host:ci.thib-o.eu"
+
+  drone-agent:
+    image: drone/agent:0.8
+
+    command: agent
+    depends_on:
+      - drone-server
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_SERVER=drone-server:9000
+    secrets:
+      - source: drone-shared-secret
+        target: /.env
+secrets:
+    drone-shared-secret:
+      external: true
+    drone-server-secret:
+      external: true
+volumes:
+    drone-data:
+networks:
+  web:
+    external:
+      name: infra_webgateway
