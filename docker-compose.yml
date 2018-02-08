@@ -5,28 +5,28 @@ services:
   traefik:
     image: traefik
     command:
-      - --web
-      - --docker
-      - --docker.watch
-      - --logLevel=DEBUG
+    - --web
+    - --docker
+    - --docker.watch
+    - --logLevel=DEBUG
     networks:
-      - webgateway
+    - webgateway
     ports:
-      - "80:80"
+    - "80:80"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       replicas: 2
       placement:
         constraints:
-          - node.role == manager
+        - node.role == manager
 
   datadog:
     image: datadog/docker-dd-agent:latest
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /proc/:/host/proc/:ro
-      - /sys/fs/cgroup/:/host/sys/fs/cgroup/:ro
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+    - /proc/:/host/proc/:ro
+    - /sys/fs/cgroup/:/host/sys/fs/cgroup/:ro
     deploy:
       mode: global
     secrets:
@@ -38,12 +38,12 @@ services:
   summologic:
     image: tjamet/sumologic-collector:latest
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    - /var/run/docker.sock:/var/run/docker.sock:ro
     deploy:
       mode: global
     secrets:
-      - sumo-access-id
-      - sumo-access-key
+    - sumo-access-id
+    - sumo-access-key
     environment:
       SUMO_ACCESS_ID_FILE: /run/secrets/sumo-access-id
       SUMO_ACCESS_KEY_FILE: /run/secrets/sumo-access-key
