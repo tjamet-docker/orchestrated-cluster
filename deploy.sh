@@ -7,4 +7,4 @@ for arg in $*; do
     compose_files+=" -f docker-compose.${arg}.yml"
 done
 
-docker-compose ${compose_files} config | docker stack deploy --compose-file - infra
+docker-compose ${compose_files} config | docker stack deploy --prune --compose-file - infra
