@@ -9,6 +9,7 @@ services:
       - --docker.watch=true
       - --acme
       - --acme.entrypoint=https
+      - --acme.httpChallenge.entryPoint=http
       - --acme.storage=/acme/acme.json
       - --acme.OnHostRule
       - --entrypoints=Name:http Address::80 Redirect.EntryPoint:https
