@@ -7,9 +7,9 @@ Usage:
 
 ```
 docker swarm init
-echo <your dd key> | docker secret create dd-agent
-echo <your sumologic access id> | docker secret create sumo-access-id
-echo <your sumologic access key> | docker secret create sumo-access-key
+echo -n <your gandi key> | docker secret create gandi-api-key
+echo -n <your sumologic access id> | docker secret create sumo-access-id
+echo -n <your sumologic access key> | docker secret create sumo-access-key
 ./deploy.sh dev # for development releases
 ./deploy.sh prod # for production release with https and letsencrypt support
 ```
