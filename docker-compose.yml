@@ -48,12 +48,34 @@ services:
       SUMO_ACCESS_ID_FILE: /run/secrets/sumo-access-id
       SUMO_ACCESS_KEY_FILE: /run/secrets/sumo-access-key
 
+  mohotani:
+    image: tjamet/mohotani
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+        - node.role == manager
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    secrets:
+    - gandi-api-key
+    command:
+    - --gandi
+    - --gandi.key-file
+    - /run/secrets/gandi-api-key
+    - --domains.docker
+    - --domains.docker.watch
+    - --ips.ipify
+    - --watch.delay=5m
+
 secrets:
   sumo-access-id:
     external: true
   sumo-access-key:
     external: true
   dd-agent:
+    external: true
+  gandi-api-key:
     external: true
 
 networks:
